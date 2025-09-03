@@ -45,16 +45,16 @@ let authRecoveryTriggered = false;
 // ---- Client with pinned webVersion + remote cache ----
 // Change webVersion to a version that works for you if needed.
 const client = new Client({
-  authStrategy: new LocalAuth(),
-  webVersion: '2.2412.54', // start with a stable version you tested
+  authStrategy: new LocalAuth({ dataPath: '/data/.wwebjs_auth' }),
+  webVersion: '2.2412.54',
   webVersionCache: {
     type: 'remote',
-    // {version} will be replaced automatically
     remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/{version}.html',
     strict: false
   },
   puppeteer: {
     headless: true,
+    executablePath: '/usr/bin/chromium-browser', // nécessaire pour Docker
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -67,6 +67,7 @@ const client = new Client({
     ]
   }
 });
+
 
 // Helpers
 async function safeDestroy() {

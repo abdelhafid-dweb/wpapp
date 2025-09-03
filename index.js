@@ -9,19 +9,8 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const allowedOrigins = [
-  "https://ts.travel4you.ma",
-  "https://backoff.travel4you.ma"
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "https://backoff.travel4you.ma", 
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -44,21 +33,22 @@ const wppconnect = require('@wppconnect-team/wppconnect');
 wppconnect.create({
   session: 'wp-session',
   headless: true,
-  useChrome: true // يجبر wppconnect يستخدم Google Chrome إذا متاح
+  useChrome: true,
+  catchQR: async (base64Qr) => {
+    console.log("📲 QR Code reçu");
+    lastQrCode = base64Qr;
+  }
 })
 .then(client => {
   clientInstance = client;
-  isConnected = true;
 
-  console.log("✅ WhatsApp client ready");
-
-  // Handle QR Code
-  client.on('qrCode', async (qrCode) => {
-    console.log("📲 QR Code received");
-    lastQrCode = await QRCode.toDataURL(qrCode);
+  // Gestion de l'état de connexion
+  client.onStateChange(state => {
+    console.log("🔄 Etat WhatsApp:", state);
+    isConnected = state === "CONNECTED";
   });
 
-  // Handle messages
+  // Gestion des messages entrants
   client.onMessage(async (message) => {
     if (message.fromMe) return;
     try {
@@ -66,20 +56,17 @@ wppconnect.create({
         sender_number: message.from,
         message_body: message.body || message.type
       });
-      console.log("📩 Message forwarded to Django:", message.body);
+      console.log("📩 Message envoyé à Django:", message.body);
     } catch (err) {
-      console.error("❌ Error sending to Django:", err.message);
+      console.error("❌ Erreur Django:", err.message);
     }
   });
 
-  // Sync contacts periodically
+  // Sync contacts périodiquement toutes les 2 minutes
   setInterval(async () => {
     try {
       const contacts = await client.getAllContacts();
-      const syncData = contacts.map(c => ({
-        number: c.id.user,
-        direction: 'sync'
-      }));
+      const syncData = contacts.map(c => ({ number: c.id.user, direction: 'sync' }));
       if (syncData.length > 0) {
         await axios.post(DJANGO_SYNC_CONTACTS_URL, syncData);
         console.log(`🔄 Synced ${syncData.length} contacts`);
@@ -91,7 +78,9 @@ wppconnect.create({
 
 })
 .catch(err => console.error("❌ Init error:", err));
-
+app.get("/", (req, res) => {
+  res.send("✅ WhatsApp backend is running");
+});
 // API Endpoints
 app.get('/whatsapp-status', (req, res) => {
   res.json({
@@ -146,3 +135,4 @@ app.post('/relance-pub', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+

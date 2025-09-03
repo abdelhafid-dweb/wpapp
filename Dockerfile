@@ -1,6 +1,10 @@
-FROM node:18-slim
+FROM node:18-bullseye
 
-# Installer Chromium + dépendances + build tools
+WORKDIR /app
+
+COPY package*.json ./
+
+# Installer dépendances système et npm modules
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
@@ -23,11 +27,9 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     python3 \
     g++ \
+    git \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-COPY package*.json ./
 RUN npm install --production --unsafe-perm
 
 COPY . .

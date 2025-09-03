@@ -54,7 +54,7 @@ const client = new Client({
   },
   puppeteer: {
     headless: true,
-    executablePath: '/usr/bin/chromium-browser', // nécessaire pour Docker
+    executablePath: '/usr/bin/chromium', // nécessaire pour Docker
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -252,4 +252,5 @@ client.initialize();
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on http://0.0.0.0:${PORT}`);
 });
+
 

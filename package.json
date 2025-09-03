@@ -2,9 +2,9 @@
   "name": "my-whatsapp-service",
   "version": "1.0.0",
   "main": "index.js",
-  ,"scripts": {
-  "start": "node index.js",
-  "test": "echo \"Error: no test specified\" && exit 1"
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +19,7 @@
     "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
     "rimraf": "^6.0.1",
+    "whatsapp-web.js": "^1.33.2"
   }
 }
+

@@ -1,7 +1,8 @@
 FROM node:18-slim
 
-# Puppeteer dependencies
+# Installer Chromium et ses dépendances
 RUN apt-get update && apt-get install -y \
+    chromium \
     fonts-liberation \
     libappindicator3-1 \
     libasound2 \
@@ -29,8 +30,7 @@ RUN npm install
 
 COPY . .
 
-# Puppeteer environment variable
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 EXPOSE 8080
 

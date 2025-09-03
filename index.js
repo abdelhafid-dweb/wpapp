@@ -34,6 +34,8 @@ wppconnect.create({
   session: 'wp-session',
   headless: true,
   useChrome: true,
+  executablePath: '/usr/bin/chromium', // chemin vers Chromium
+  debug: true, // affiche tous les logs de WPPConnect
   catchQR: async (base64Qr) => {
     console.log("📲 QR Code reçu");
     lastQrCode = base64Qr;
@@ -135,4 +137,5 @@ app.post('/relance-pub', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+
 

@@ -2,14 +2,16 @@
   "name": "my-whatsapp-service",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
+  ,"scripts": {
+  "start": "node index.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@wppconnect-team/wppconnect": "^1.37.4",
     "axios": "^1.11.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
@@ -17,6 +19,5 @@
     "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
     "rimraf": "^6.0.1",
-    "whatsapp-web.js": "^1.33.2"
   }
 }

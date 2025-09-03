@@ -1,7 +1,6 @@
-# Dockerfile - Fly.io optimized for Node + Chromium
 FROM node:18-slim
 
-# Installer Chromium et dépendances nécessaires pour Puppeteer / wppconnect
+# Installer Chromium + dépendances + build tools
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
@@ -21,23 +20,20 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     curl \
     unzip \
+    build-essential \
+    python3 \
+    g++ \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers package.json / package-lock.json et installer les dépendances
 COPY package*.json ./
-RUN npm install --production
+RUN npm install --production --unsafe-perm
 
-# Copier le reste de l'application
 COPY . .
 
-# Variable d'environnement pour Puppeteer / wppconnect
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-# Exposer le port de l'application
 EXPOSE 8080
 
-# Commande de démarrage
 CMD ["node", "index.js"]
